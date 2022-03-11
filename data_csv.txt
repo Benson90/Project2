@@ -1,4 +1,4 @@
-Name,Code
+Country,Code
 Afghanistan,AF
 Åland Islands,AX
 Albania,AL
