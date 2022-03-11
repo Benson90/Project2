@@ -204,6 +204,7 @@ Slovakia,SK
 Slovenia,SI
 Solomon Islands,SB
 Somalia,SO
+Dubai,DU
 South Africa,ZA
 South Georgia and the South Sandwich Islands,GS
 South Sudan,SS
