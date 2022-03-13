@@ -1,0 +1,142 @@
+---
+title: "Project 2-3"
+author: "Benson Toi and Jay Lee"
+date: "3/10/2022"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+```{r lib}
+
+library(tidyverse)
+library(stringr)
+
+```
+
+## Ramen
+
+This Data Set had 2580 reviews on the Ramen noodles from The Ramen Rater's "The Big List." I want to know which brand, favor, Ramen's style, brand's origin based on the rating by the reviewer. 
+
+```{r ds}
+Ramen_DS <- read.csv(file="https://raw.githubusercontent.com/Benson90/Project2/main/ramen-ratings.csv",header = TRUE, sep=",")
+
+```
+
+
+## Data Transformation 
+
+We were removing some unrated data and converting the character to Numbers. 
+
+```{r Transformation}
+
+#remove unrated data
+Ramen_DS <- Ramen_DS[!(Ramen_DS$Stars=="Unrated"),]
+
+#convert from char to number
+Ramen_DS$Stars <-as.numeric(Ramen_DS$Stars)
+
+head(Ramen_DS)
+
+```
+
+## Cleaning the insufficient review data
+
+Grouping the category and using the data had a minimum of 50 or 10 reviewers. 
+
+```{r filter}
+
+#Filter out the number of review less than 50 or 10
+#Country
+Country_counts <- Ramen_DS %>%
+    group_by(Country) %>%
+    tally
+
+Frequent_country <-  Country_counts %>%
+    filter(n >= 50) %>%
+    select(Country)
+
+#Style
+Style_counts <- Ramen_DS %>%
+    group_by(Style) %>%
+    tally
+
+Frequent_Style <-  Style_counts %>%
+    filter(n >= 50) %>%
+    select(Style)
+
+#Brand
+Brand_counts <- Ramen_DS %>%
+    group_by(Brand) %>%
+    tally
+
+Frequent_Brand <-  Brand_counts %>%
+    filter(n >= 50) %>%
+    select(Brand)
+
+```
+
+## Found the Top favorite Ramen based on Brand, Style, and Country
+
+By using the sort function and calculating the mean review rate to find the top review from the reviewer.
+
+```{r sort}
+
+Ranking_DS <- Ramen_DS %>%
+  group_by(Country) %>%
+  filter(Country %in% Frequent_country$Country) %>%
+  summarize(mean_rate = mean(Stars)) %>%
+  arrange(desc(mean_rate))
+head(Ranking_DS,10)
+
+Ranking_DS <- Ramen_DS %>%
+  group_by(Style) %>%
+  filter(Style %in% Frequent_Style$Style) %>%
+  summarize(mean_rate = mean(Stars)) %>%
+  arrange(desc(mean_rate))
+head(Ranking_DS,10)
+
+Ranking_DS <- Ramen_DS %>%
+  group_by(Brand) %>%
+  filter(Brand %in% Frequent_Brand$Brand) %>%
+  summarize(mean_rate = mean(Stars)) %>%
+  arrange(desc(mean_rate))
+head(Ranking_DS,10)
+
+```
+## Summary
+
+We found that the reviewer likes Asia-made Ramen. And Reviewer favorite's style is Ramen in Pack, but the rating difference is in the close gap. Also, the Top 5 favorite brand from a reviewer is Indomie, Samyang Foods, Paldo, Nongshim, and Nissin.
+Since we are staying in the US, we would like to know what this US-made favorite is.  And get to know the top-rating variety of Ramen. 
+
+```{r more}
+
+US_Top_DS <- Ramen_DS %>%
+  filter(Country =="USA") %>%
+  arrange(desc(Stars))
+
+head(US_Top_DS,10)
+
+Style_Top_DS <- Ramen_DS %>%
+  filter(Style =="Pack") %>%
+  arrange(desc(Stars))
+
+head(Style_Top_DS,10)
+
+Brand_Top_DS <- Ramen_DS %>%
+  filter(Brand =="Indomie") %>%
+  arrange(desc(Stars))
+
+head(Brand_Top_DS,5)
+
+Brand_Top_DS <- Ramen_DS %>%
+  filter(Brand =="Samyang Foods") %>%
+  arrange(desc(Stars))
+
+head(Brand_Top_DS,5)
+```
+
+
